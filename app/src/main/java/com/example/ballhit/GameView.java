@@ -11,6 +11,7 @@ import android.graphics.Paint;
 import android.graphics.Point;
 import android.media.MediaPlayer;
 import android.os.Handler;
+import android.util.AttributeSet;
 import android.view.Display;
 import android.view.MotionEvent;
 import android.view.View;
@@ -43,6 +44,40 @@ public class GameView extends View {
     int brokenBricks = 0;
     boolean gameOver = false;
 
+    /*public GameView(Context context, AttributeSet attributeSet) {
+        super(context, attributeSet);
+        this.context = context;
+        ball = BitmapFactory.decodeResource(getResources(), R.drawable.ball);
+        paddle = BitmapFactory.decodeResource(getResources(), R.drawable.paddle);
+        handler = new Handler();
+        runnable = new Runnable() {
+            @Override
+            public void run() {
+                invalidate();
+            }
+        };
+        mpHit = MediaPlayer.create(context, R.raw.hit);
+        mpMiss =  MediaPlayer.create(context, R.raw.miss);
+        mpBreak = MediaPlayer.create(context, R.raw.breaking);
+        textPaint.setColor(Color.RED);
+        textPaint.setTextSize(TEXT_SIZE);
+        textPaint.setTextAlign(Paint.Align.LEFT);
+        healthPaint.setColor(Color.GREEN);
+        brickPaint.setColor(Color.argb(255, 249, 129, 0));
+        Display display = ((Activity) getContext()).getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        dWidth = size.x;
+        dHeight = size.y;
+        random = new Random();
+        ballX = random.nextInt(dWidth - 50);
+        ballY = dHeight / 3;
+        paddleY = (dHeight * 4) / 5;
+        paddleX = dWidth / 2 - paddle.getWidth() / 2;
+        ballWidth = ball.getWidth();
+        ballHeight = ball.getHeight();
+        createBricks();
+    }*/
     public GameView(Context context) {
         super(context);
         this.context = context;
@@ -96,7 +131,7 @@ public class GameView extends View {
         ballX += velocity.getX();
         ballY += velocity.getY();
         if ((ballX >= dWidth - ball.getWidth()) || ballX <= 0 ) {
-            velocity.setX(velocity.getY() * -1);
+            velocity.setX(velocity.getX() * -1);
 
         }
         if (ballY <= 0) {
@@ -130,7 +165,7 @@ public class GameView extends View {
         canvas.drawBitmap(paddle, paddleX, paddleY, null);
         for (int i = 0 ; i < numBricks ; i++) {
             if (bricks[i].getVisibility()) {
-                canvas.drawRect(bricks[i].column * bricks[i].row + 1, bricks[i].row * bricks[i].height + 1, bricks[i].column * bricks[i].width + bricks[i].width - 1, bricks[i].row * bricks[i].height + bricks[i].height - 1, brickPaint);
+                canvas.drawRect(bricks[i].column * bricks[i].width + 1, bricks[i].row * bricks[i].height + 1, bricks[i].column * bricks[i].width + bricks[i].width - 1, bricks[i].row * bricks[i].height + bricks[i].height - 1, brickPaint);
             }
         }
         canvas.drawText("" + points, 20, TEXT_SIZE, textPaint);
@@ -156,6 +191,7 @@ public class GameView extends View {
                     if (brokenBricks == 24) {
                         launchGameOver();
                     }
+                    break;
                 }
             }
         }
