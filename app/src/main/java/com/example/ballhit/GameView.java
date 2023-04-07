@@ -126,7 +126,7 @@ public class GameView extends View {
 
         // Draw countdown text on canvas
         String countdownText = String.format("%02d:%02d", minutes, seconds);
-        canvas.drawText(countdownText, getWidth() / 2f, getHeight() / 2f, textPaint);
+        float countdownTextSize = textPaint.measureText(countdownText);
 
         ballX += velocity.getX();
         ballY += velocity.getY();
@@ -169,6 +169,7 @@ public class GameView extends View {
             }
         }
         canvas.drawText("" + points, 20, TEXT_SIZE, textPaint);
+        canvas.drawText(countdownText, (getWidth() - countdownTextSize) / 2f, textPaint.getTextSize(), textPaint);
         if (life == 2) {
             healthPaint.setColor(Color.YELLOW);
         } else if (life == 1) {
