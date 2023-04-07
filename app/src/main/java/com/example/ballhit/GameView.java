@@ -10,6 +10,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.media.MediaPlayer;
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.util.AttributeSet;
 import android.view.Display;
@@ -43,43 +44,19 @@ public class GameView extends View {
     int numBricks = 0;
     int brokenBricks = 0;
     boolean gameOver = false;
+    private long remainingTime;
+    private CountDownTimer countDownTimer;
 
-    /*public GameView(Context context, AttributeSet attributeSet) {
+    public GameView(Context context, AttributeSet attributeSet) {
         super(context, attributeSet);
-        this.context = context;
-        ball = BitmapFactory.decodeResource(getResources(), R.drawable.ball);
-        paddle = BitmapFactory.decodeResource(getResources(), R.drawable.paddle);
-        handler = new Handler();
-        runnable = new Runnable() {
-            @Override
-            public void run() {
-                invalidate();
-            }
-        };
-        mpHit = MediaPlayer.create(context, R.raw.hit);
-        mpMiss =  MediaPlayer.create(context, R.raw.miss);
-        mpBreak = MediaPlayer.create(context, R.raw.breaking);
-        textPaint.setColor(Color.RED);
-        textPaint.setTextSize(TEXT_SIZE);
-        textPaint.setTextAlign(Paint.Align.LEFT);
-        healthPaint.setColor(Color.GREEN);
-        brickPaint.setColor(Color.argb(255, 249, 129, 0));
-        Display display = ((Activity) getContext()).getWindowManager().getDefaultDisplay();
-        Point size = new Point();
-        display.getSize(size);
-        dWidth = size.x;
-        dHeight = size.y;
-        random = new Random();
-        ballX = random.nextInt(dWidth - 50);
-        ballY = dHeight / 3;
-        paddleY = (dHeight * 4) / 5;
-        paddleX = dWidth / 2 - paddle.getWidth() / 2;
-        ballWidth = ball.getWidth();
-        ballHeight = ball.getHeight();
-        createBricks();
-    }*/
+        init(context);
+    }
     public GameView(Context context) {
         super(context);
+        init(context);
+    }
+
+    private void init(Context context) {
         this.context = context;
         ball = BitmapFactory.decodeResource(getResources(), R.drawable.ball);
         paddle = BitmapFactory.decodeResource(getResources(), R.drawable.paddle);
@@ -110,6 +87,20 @@ public class GameView extends View {
         paddleX = dWidth / 2 - paddle.getWidth() / 2;
         ballWidth = ball.getWidth();
         ballHeight = ball.getHeight();
+        countDownTimer = new CountDownTimer(60000, 1000) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+                remainingTime = millisUntilFinished;
+                invalidate();
+            }
+
+            @Override
+            public void onFinish() {
+                remainingTime = 0;
+                invalidate();
+            }
+        };
+        countDownTimer.start();
         createBricks();
     }
 
@@ -128,6 +119,15 @@ public class GameView extends View {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         canvas.drawColor(Color.BLACK);
+
+        // Calculate minutes and seconds from remaining time
+        int minutes = (int) (remainingTime / 1000) / 60;
+        int seconds = (int) (remainingTime / 1000) % 60;
+
+        // Draw countdown text on canvas
+        String countdownText = String.format("%02d:%02d", minutes, seconds);
+        canvas.drawText(countdownText, getWidth() / 2f, getHeight() / 2f, textPaint);
+
         ballX += velocity.getX();
         ballY += velocity.getY();
         if ((ballX >= dWidth - ball.getWidth()) || ballX <= 0 ) {
