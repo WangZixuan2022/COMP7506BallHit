@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -7,10 +8,15 @@
     android:background="#E1F5FE"
     android:orientation="vertical"
     android:gravity="center">
-    <ImageButton
+    <ImageView
+        android:id="@+id/optionIcon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:background="@drawable/play"
-        android:onClick="startGame" />
+        android:src="@drawable/option"
+        android:onClick="showOverlay"
+        android:clickable="true" />
+    <com.example.ballhit.GameView
+        android:id="@+id/gameview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
 </LinearLayout>

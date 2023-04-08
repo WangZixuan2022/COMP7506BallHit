@@ -10,7 +10,6 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.media.MediaPlayer;
-import android.os.CountDownTimer;
 import android.os.Handler;
 import android.util.AttributeSet;
 import android.view.Display;
@@ -19,7 +18,7 @@ import android.view.View;
 
 import java.util.Random;
 
-public class GameView extends View {
+public class GameView extends View  {
 
     Context context;
     float ballX, ballY;
@@ -44,8 +43,8 @@ public class GameView extends View {
     int numBricks = 0; // Number of bricks
     int brokenBricks = 0; // Number of broken bricks
     boolean gameOver = false; // Flag to indicate if game is over
-    private long remainingTime; // Remaining time in milliseconds
-    private CountDownTimer countDownTimer; // Countdown timer for game duration
+    private CountDownTimerFactory.CountDownTimerExt countDownTimer; // Countdown timer for game duration
+    private boolean stopGame;
 
     public GameView(Context context, AttributeSet attributeSet) {
         super(context, attributeSet);
@@ -87,20 +86,9 @@ public class GameView extends View {
         paddleX = dWidth / 2 - paddle.getWidth() / 2;
         ballWidth = ball.getWidth();
         ballHeight = ball.getHeight();
-        countDownTimer = new CountDownTimer(60000, 1000) {
-            @Override
-            public void onTick(long millisUntilFinished) {
-                remainingTime = millisUntilFinished;
-                invalidate();
-            }
-
-            @Override
-            public void onFinish() {
-                remainingTime = 0;
-                invalidate();
-            }
-        };
+        countDownTimer = CountDownTimerFactory.getInstance(60000);
         countDownTimer.start();
+        stopGame = false;
         createBricks();
     }
 
@@ -121,8 +109,9 @@ public class GameView extends View {
         canvas.drawColor(Color.BLACK);
 
         // Calculate minutes and seconds from remaining time
-        int minutes = (int) (remainingTime / 1000) / 60;
-        int seconds = (int) (remainingTime / 1000) % 60;
+
+        int minutes = (int) (countDownTimer.remainingTime / 1000) / 60;
+        int seconds = (int) (countDownTimer.remainingTime / 1000) % 60;
 
         // Draw countdown text on canvas
         String countdownText = String.format("%02d:%02d", minutes, seconds);
@@ -200,7 +189,7 @@ public class GameView extends View {
         if (brokenBricks == numBricks) {
             gameOver = true;
         }
-        if (!gameOver) {
+        if (!gameOver && !stopGame) {
             handler.postDelayed(runnable, UPDATE_MILLIS);
         }
     }
@@ -244,5 +233,18 @@ public class GameView extends View {
         int[] values = {-35, -30, -25, 25, 30, 35};
         int index = random.nextInt(6);
         return values[index];
+    }
+
+    public void stopGame() {
+        stopGame = true;
+        long remaingTime = countDownTimer.remainingTime;
+        countDownTimer.cancel();
+        countDownTimer = CountDownTimerFactory.getInstance(remaingTime);
+    }
+
+    public void resumeGame() {
+        stopGame = false;
+        countDownTimer.start();
+        invalidate();
     }
 }
