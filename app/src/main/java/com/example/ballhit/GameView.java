@@ -23,29 +23,29 @@ public class GameView extends View {
 
     Context context;
     float ballX, ballY;
-    Velocity velocity = new Velocity(23, 32);
+    Velocity velocity = new Velocity(23, 32); // Velocity of the ball
     Handler handler; // Delay UPDATE_MILLIS to run runnable thread
     final long UPDATE_MILLIS = 30; // Control FPS, recommended 30 ms
     Runnable runnable; // Background thread to call invalidate to call onDraw()
-    Paint textPaint = new Paint();
-    Paint healthPaint = new Paint();
-    Paint brickPaint = new Paint();
-    float TEXT_SIZE = 120;
-    float paddleX, paddleY;
-    float oldX, oldPaddleX;
-    int points = 0;
-    int life = 3;
-    Bitmap ball, paddle;
-    int dWidth, dHeight;
-    int ballWidth, ballHeight;
-    MediaPlayer mpHit, mpMiss, mpBreak;
-    Random random;
-    Brick[] bricks = new Brick[30];
-    int numBricks = 0;
-    int brokenBricks = 0;
-    boolean gameOver = false;
-    private long remainingTime;
-    private CountDownTimer countDownTimer;
+    Paint textPaint = new Paint(); // Paint object for text rendering
+    Paint healthPaint = new Paint(); // Paint object for health bar rendering
+    Paint brickPaint = new Paint(); // Paint object for brick rendering
+    float TEXT_SIZE = 120; // Text size for countdown
+    float paddleX, paddleY; // X and Y coordinates of the paddle
+    float oldX, oldPaddleX; // Old X coordinates of the paddle
+    int points = 0; // Player's points
+    int life = 3; // Player's remaining life
+    Bitmap ball, paddle; // Bitmap images for ball and paddle
+    int dWidth, dHeight; // Width and height of the screen
+    int ballWidth, ballHeight; // Width and height of the ball
+    MediaPlayer mpHit, mpMiss, mpBreak; // Media players for sound effects
+    Random random; // Random object for generating random numbers
+    Brick[] bricks = new Brick[30]; // Array of bricks
+    int numBricks = 0; // Number of bricks
+    int brokenBricks = 0; // Number of broken bricks
+    boolean gameOver = false; // Flag to indicate if game is over
+    private long remainingTime; // Remaining time in milliseconds
+    private CountDownTimer countDownTimer; // Countdown timer for game duration
 
     public GameView(Context context, AttributeSet attributeSet) {
         super(context, attributeSet);
@@ -64,7 +64,7 @@ public class GameView extends View {
         runnable = new Runnable() {
             @Override
             public void run() {
-                invalidate();
+                invalidate(); // Call onDraw() to redraw the view
             }
         };
         mpHit = MediaPlayer.create(context, R.raw.hit);
