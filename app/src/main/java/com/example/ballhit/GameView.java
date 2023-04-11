@@ -108,6 +108,12 @@ public class GameView extends View  {
         super.onDraw(canvas);
         canvas.drawColor(Color.BLACK);
 
+        if (countDownTimer.remainingTime == 0) {
+            // Time is up
+            gameOver = true;
+            launchGameOver();
+        }
+
         // Calculate minutes and seconds from remaining time
 
         int minutes = (int) (countDownTimer.remainingTime / 1000) / 60;
@@ -140,15 +146,19 @@ public class GameView extends View  {
                 launchGameOver();
             }
         }
-        if (((ballX + ball.getWidth()) >= paddleX)
-        && (ballX <= paddleX + paddle.getWidth())
-        && (ballY + ball.getHeight() >= paddleY)
-        && (ballY + ball.getHeight() <= paddleY + paddle.getHeight())) {
-            if (mpHit != null) {
-                mpHit.start();
+        if (velocity.getY() >= 0) {
+            // Only when the ball falls down to the paddle, the collision will be included
+            // Fix the bug that the ball bounces within paddle boundary
+            if (((ballX + ball.getWidth()) >= paddleX)
+                    && (ballX <= paddleX + paddle.getWidth())
+                    && (ballY + ball.getHeight() >= paddleY)
+                    && (ballY + ball.getHeight() <= paddleY + paddle.getHeight())) {
+                if (mpHit != null) {
+                    mpHit.start();
+                }
+                velocity.setX(velocity.getX() + 1);
+                velocity.setY((velocity.getY() + 1) * -1);
             }
-            velocity.setX(velocity.getX() + 1);
-            velocity.setY((velocity.getY() + 1) * -1);
         }
         canvas.drawBitmap(ball, ballX, ballY, null);
         canvas.drawBitmap(paddle, paddleX, paddleY, null);
@@ -187,6 +197,7 @@ public class GameView extends View  {
         }
 
         if (brokenBricks == numBricks) {
+            // All blocks are eliminated
             gameOver = true;
         }
         if (!gameOver && !stopGame) {
